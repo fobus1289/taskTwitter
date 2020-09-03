@@ -56,7 +56,7 @@ trait Validator
             $this->error([$key => $message ?? 'is not number']);
         }
         
-        if($isFloat && !\is_float((float)$this->$key)) {
+        if($isFloat && !@\is_float((float)$this->$key)) {
             $message = $this->message["$key.float"];
             $this->error([$key => $message ?? 'this number but expected float number '.$this->$key]);  
         }
@@ -82,7 +82,7 @@ trait Validator
     function unique($key,$tableAndColumn,$isUnique = true)
     {
         
-        list($table,$column) = explode('.',$tableAndColumn);
+        list($table,$column) = @\explode('.',$tableAndColumn);
         
         $sql = "SELECT COUNT($column) FROM {$table} WHERE {$column} = '{$this->$key}'";
         
@@ -104,7 +104,7 @@ trait Validator
     
     function email($key)
     {
-        if (! \filter_var($this->$key, FILTER_VALIDATE_EMAIL)) {
+        if (! @\filter_var($this->$key, FILTER_VALIDATE_EMAIL)) {
             $message = $this->message["$key.email"];
             $this->error([$key => $message ?? 'Is not a valid email address']);
         }
@@ -115,7 +115,7 @@ trait Validator
     function fileCheck($key,$needle = '*',$size = -1)
     {
         
-        list($key,$type) = \explode('.',$key);
+        list($key,$type) = @\explode('.',$key);
         
         $file = $this->file($key);
  
@@ -143,7 +143,7 @@ trait Validator
             
         }
 
-        $ext = \end(\explode('.',$file->name));
+        $ext = @\end(@\explode('.',$file->name));
         
         if(is_array ($needle) && ! \in_array($ext, $needle)) {
             $message = $this->message["$key.file.extension"];
